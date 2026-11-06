@@ -8,6 +8,25 @@ public class Computer {
         this.computerName = computerName;
         this.status = "AVAILABLE";
     }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public boolean openComputer() {
+        if (status.equals("AVAILABLE")) {
+            status = "IN USE";
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean closeComputer() {
+        if (status.equals("IN USE")) {
+            status = "AVAILABLE";
+            return true;
+        } else {
+            return false;
+        }
+    }
     public String getComputerName() {
         return computerName;
     }
