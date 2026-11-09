@@ -35,6 +35,41 @@ public class App {
             dichVus = duLieuDaLuu.dichVus;
         }
 
+        boolean laChu = false;
+        boolean dangNhapThanhCong = false;
+
+        for (int lan = 1; lan <= 3; lan++) {
+            System.out.println("===== DANG NHAP NETMANAGER =====");
+
+            System.out.print("Tai khoan: ");
+            String taiKhoan = scanner.next();
+
+            System.out.print("Mat khau: ");
+            String matKhau = scanner.next();
+
+            if (taiKhoan.equals("chu") && matKhau.equals("123456")) {
+                laChu = true;
+                dangNhapThanhCong = true;
+                System.out.println("Dang nhap CHU QUAN thanh cong!");
+                break;
+            }
+
+            if (taiKhoan.equals("nhanvien") && matKhau.equals("123456")) {
+                laChu = false;
+                dangNhapThanhCong = true;
+                System.out.println("Dang nhap NHAN VIEN thanh cong!");
+                break;
+            }
+
+            System.out.println("Sai tai khoan hoac mat khau!");
+        }
+
+        if (!dangNhapThanhCong) {
+            System.out.println("Dang nhap that bai 3 lan!");
+            scanner.close();
+            return;
+        }
+
         while (true) {
             System.out.println("===== NETMANAGER =====");
             System.out.println("1. Quan ly may tinh");
@@ -47,6 +82,11 @@ public class App {
             System.out.println("8. Danh sach dich vu");
             System.out.println("9. Goi dich vu");
             System.out.println("10. Chuyen may");
+            if (laChu) {
+                System.out.println("11. Them dich vu");
+                System.out.println("12. Cap nhat dich vu va gia");
+                System.out.println("13. Xoa dich vu");
+            }
             System.out.println("0. Thoat");
             System.out.print("Nhap lua chon: ");
             int choice = scanner.nextInt();
@@ -329,6 +369,150 @@ public class App {
                     System.out.println("Khach hang: " + transferSession.getCustomerId());
 
                     break;
+
+                case 11: {
+                    if (!laChu) {
+                        System.out.println("Chi chu quan moi duoc them dich vu!");
+                        break;
+                    }
+
+                    System.out.print("Nhap ma dich vu: ");
+                    String maMoi = scanner.next();
+
+                    boolean daTonTai = false;
+
+                    for (DichVu dv : dichVus) {
+                        if (dv.getMaDichVu().equalsIgnoreCase(maMoi)) {
+                            daTonTai = true;
+                            break;
+                        }
+                    }
+
+                    if (daTonTai) {
+                        System.out.println("Ma dich vu da ton tai!");
+                        break;
+                    }
+
+                    scanner.nextLine();
+                    System.out.print("Nhap ten dich vu: ");
+                    String tenMoi = scanner.nextLine().trim();
+
+                    if (tenMoi.isEmpty()) {
+                        System.out.println("Ten dich vu khong duoc rong!");
+                        break;
+                    }
+
+                    System.out.print("Nhap gia (VND): ");
+                    long giaMoi;
+
+                    try {
+                        giaMoi = Long.parseLong(scanner.next());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Gia phai la so nguyen!");
+                        break;
+                    }
+
+                    if (giaMoi <= 0) {
+                        System.out.println("Gia phai lon hon 0!");
+                        break;
+                    }
+
+                    dichVus.add(new DichVu(maMoi, tenMoi, giaMoi));
+                    System.out.println("Them dich vu thanh cong!");
+                    break;
+                }
+
+                case 12: {
+                    if (!laChu) {
+                        System.out.println("Chi chu quan moi duoc sua dich vu!");
+                        break;
+                    }
+
+                    System.out.print("Nhap ma dich vu can sua: ");
+                    String maSua = scanner.next();
+
+                    int viTri = -1;
+
+                    for (int i = 0; i < dichVus.size(); i++) {
+                        if (dichVus.get(i).getMaDichVu()
+                                .equalsIgnoreCase(maSua)) {
+                            viTri = i;
+                            break;
+                        }
+                    }
+
+                    if (viTri == -1) {
+                        System.out.println("Khong tim thay dich vu!");
+                        break;
+                    }
+
+                    DichVu dvCu = dichVus.get(viTri);
+
+                    scanner.nextLine();
+                    System.out.print("Ten moi (nhap - de giu nguyen): ");
+                    String tenSua = scanner.nextLine().trim();
+
+                    if (tenSua.equals("-")) {
+                        tenSua = dvCu.getTenDichVu();
+                    }
+
+                    if (tenSua.isEmpty()) {
+                        System.out.println("Ten khong duoc rong!");
+                        break;
+                    }
+
+                    System.out.print("Nhap gia moi (VND): ");
+                    long giaSua;
+
+                    try {
+                        giaSua = Long.parseLong(scanner.next());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Gia phai la so nguyen!");
+                        break;
+                    }
+
+                    if (giaSua <= 0) {
+                        System.out.println("Gia phai lon hon 0!");
+                        break;
+                    }
+
+                    DichVu dvMoi = new DichVu(
+                            dvCu.getMaDichVu(), tenSua, giaSua);
+
+                    dichVus.set(viTri, dvMoi);
+
+                    System.out.println("Cap nhat dich vu thanh cong!");
+                    break;
+                }
+
+                case 13: {
+                    if (!laChu) {
+                        System.out.println("Chi chu quan moi duoc xoa dich vu!");
+                        break;
+                    }
+
+                    System.out.print("Nhap ma dich vu can xoa: ");
+                    String maXoa = scanner.next();
+
+                    boolean daXoa = false;
+
+                    for (int i = 0; i < dichVus.size(); i++) {
+                        if (dichVus.get(i).getMaDichVu()
+                                .equalsIgnoreCase(maXoa)) {
+
+                            dichVus.remove(i);
+                            daXoa = true;
+                            break;
+                        }
+                    }
+
+                    if (daXoa) {
+                        System.out.println("Xoa dich vu thanh cong!");
+                    } else {
+                        System.out.println("Khong tim thay dich vu!");
+                    }
+                    break;
+                }
 
                 case 0:
                     LuuDuLieu.save(new LuuDuLieu.Data(
