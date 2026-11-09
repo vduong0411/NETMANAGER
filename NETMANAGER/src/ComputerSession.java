@@ -2,7 +2,9 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.ArrayList;
 
-public class ComputerSession {
+public class ComputerSession implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String sessionId; // mã phiên
     private String computerId; // mã máy tính
     private LocalDateTime startTime; // thời gian bắt đầu phiên

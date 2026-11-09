@@ -25,6 +25,16 @@ public class App {
 
         Scanner scanner = new Scanner(System.in);
 
+        LuuDuLieu.Data duLieuDaLuu = LuuDuLieu.load();
+
+        if (duLieuDaLuu != null) {
+            computers = duLieuDaLuu.computers;
+            customers = duLieuDaLuu.customers;
+            sessions = duLieuDaLuu.sessions;
+            hoaDons = duLieuDaLuu.hoaDons;
+            dichVus = duLieuDaLuu.dichVus;
+        }
+
         while (true) {
             System.out.println("===== NETMANAGER =====");
             System.out.println("1. Quan ly may tinh");
@@ -321,10 +331,17 @@ public class App {
                     break;
 
                 case 0:
-                    System.out.println("Thoat chuong trinh");
+                    LuuDuLieu.save(new LuuDuLieu.Data(
+                            computers,
+                            customers,
+                            sessions,
+                            hoaDons,
+                            dichVus));
+
+                    System.out.println("Thoat chuong trinh!");
+                    scanner.close();
                     return;
-                default:
-                    System.out.println("Lua chon khong hop le");
+
             }
         }
 

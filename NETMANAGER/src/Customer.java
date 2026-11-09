@@ -1,5 +1,6 @@
+public class Customer implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
 
-public class Customer {
     private String customerId;
     private String customerName;
 

@@ -1,5 +1,6 @@
+public class DichVu implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
 
-public class DichVu {
     private String maDichVu;
     private String tenDichVu;
     private long gia;

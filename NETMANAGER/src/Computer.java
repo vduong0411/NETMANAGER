@@ -1,4 +1,6 @@
-public class Computer {
+public class Computer implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String computerId;
     private String computerName;
     private String status;
