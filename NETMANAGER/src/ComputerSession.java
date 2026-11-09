@@ -8,7 +8,8 @@ public class ComputerSession {
     private LocalDateTime startTime; // thời gian bắt đầu phiên
     private LocalDateTime endTime; // thời gian kết thúc phiên
     private String customerId; // mã khách hàng
-    private ArrayList<DichVu> dichVuDaGoi = new ArrayList<>();
+    private ArrayList<DichVu> dichVuDaGoi = new ArrayList<>(); // danh sách dịch vụ đã gọi
+    private long thoiGianBuGiay = 0; // thời gian bù giây (nếu có)
 
     public ComputerSession(String sessionId, String computerId, String customerId) {
         this.sessionId = sessionId;
@@ -77,6 +78,22 @@ public class ComputerSession {
 
     public ArrayList<DichVu> getDichVuDaGoi() {
         return new ArrayList<>(dichVuDaGoi);
+    }
+
+    public void transferToComputer(String newComputerId) {
+        this.computerId = newComputerId;
+    }
+
+    public void congThoiGianBu(long soPhut) {
+        if (soPhut > 0) {
+            thoiGianBuGiay += soPhut * 60;
+        }
+    }
+
+    public long getSoGiayTinhTien() {
+        long soGiayThucTe = getUsedSeconds();
+
+        return Math.max(0, soGiayThucTe - thoiGianBuGiay);
     }
 
 }

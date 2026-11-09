@@ -36,6 +36,7 @@ public class App {
             System.out.println("7. Them khach hang");
             System.out.println("8. Danh sach dich vu");
             System.out.println("9. Goi dich vu");
+            System.out.println("10. Chuyen may");
             System.out.println("0. Thoat");
             System.out.print("Nhap lua chon: ");
             int choice = scanner.nextInt();
@@ -138,27 +139,30 @@ public class App {
 
                             if (closed) {
                                 long seconds = activeSession.getUsedSeconds();
-                                long fee = BillingCalculator.calculateFee(seconds);
+                                long soGiayTinhTien = activeSession.getSoGiayTinhTien();
+                                long fee = BillingCalculator.calculateFee(soGiayTinhTien);
 
                                 HoaDon hoaDon = new HoaDon(
                                         "HD" + (hoaDons.size() + 1),
                                         computerToClose.getComputerId(),
                                         activeSession.getCustomerId(),
                                         seconds,
+                                        soGiayTinhTien,
                                         fee,
                                         activeSession.getDichVuDaGoi());
 
                                 hoaDons.add(hoaDon);
+                                System.out.println("Dong may thanh cong!");
                                 hoaDon.printBill();
 
-                                System.out.println("Dong may thanh cong!");
-                                System.out.println("So giay su dung: " + seconds);
-                                System.out.println("Tien may: " + fee + " VND");
+                            } else {
+                                System.out.println("Khong the dong may!");
                             }
 
                         } else {
                             System.out.println("Phien da ket thuc!");
                         }
+
                     } else {
                         System.out.println("Khong tim thay may hoac phien dang hoat dong!");
                     }
@@ -244,6 +248,78 @@ public class App {
                             + orderSession.getTongTienDichVu() + " VND");
                     break;
 
+                case 10:
+                    System.out.print("Nhap ma may hien tai: ");
+                    String oldId = scanner.next();
+
+                    System.out.print("Nhap ma may muon chuyen den: ");
+                    String newId = scanner.next();
+
+                    // Tim 2 may
+                    Computer oldComputer = findComputer(computers, oldId);
+                    Computer newComputer = findComputer(computers, newId);
+
+                    // Kiem tra may co ton tai khong
+                    if (oldComputer == null || newComputer == null) {
+                        System.out.println("Khong tim thay may!");
+                        break;
+                    }
+
+                    // Khong duoc chuyen den chinh may dang dung
+                    if (oldComputer.getComputerId()
+                            .equalsIgnoreCase(newComputer.getComputerId())) {
+                        System.out.println("Khong the chuyen cung mot may!");
+                        break;
+                    }
+
+                    // Tim phien dang hoat dong cua may cu
+                    ComputerSession transferSession = findActiveSession(sessions, oldComputer.getComputerId());
+
+                    if (transferSession == null) {
+                        System.out.println("Khong tim thay phien dang choi cua may cu!");
+                        break;
+                    }
+
+                    // Kiem tra trang thai may cu
+                    if (!oldComputer.getStatus().equals("IN_USE")) {
+                        System.out.println("Trang thai may cu khong hop le!");
+                        System.out.println("Trang thai: " + oldComputer.getStatus());
+                        break;
+                    }
+
+                    // May moi phai dang ranh
+                    if (!newComputer.getStatus().equals("AVAILABLE")) {
+                        System.out.println("May moi dang ban!");
+                        break;
+                    }
+
+                    // Mo may moi
+                    if (!newComputer.openComputer()) {
+                        System.out.println("Khong the mo may moi!");
+                        break;
+                    }
+
+                    // Dong may cu
+                    if (!oldComputer.closeComputer()) {
+                        newComputer.closeComputer();
+                        System.out.println("Chuyen may that bai!");
+                        break;
+                    }
+
+                    // Chuyen phien sang may moi
+                    transferSession.transferToComputer(
+                            newComputer.getComputerId());
+
+                    transferSession.congThoiGianBu(2);
+                    System.out.println("Da bu 2 phut chuyen may!");
+
+                    System.out.println("Chuyen may thanh cong!");
+                    System.out.println("Tu may: " + oldComputer.getComputerId());
+                    System.out.println("Sang may: " + newComputer.getComputerId());
+                    System.out.println("Khach hang: " + transferSession.getCustomerId());
+
+                    break;
+
                 case 0:
                     System.out.println("Thoat chuong trinh");
                     return;
@@ -294,10 +370,9 @@ public class App {
     private static Customer findCustomer(
             ArrayList<Customer> customers, String customerId) {
 
-        for (int i = 0; i < customers.size(); i++) {
-            Customer customer = customers.get(i);
-
-            if (customer.getCustomerId().equalsIgnoreCase(customerId)) {
+        for (Customer customer : customers) {
+            if (customer.getCustomerId().trim()
+                    .equalsIgnoreCase(customerId.trim())) {
                 return customer;
             }
         }
